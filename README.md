@@ -14,3 +14,19 @@ In today's world, website penetration into our daily lives are omnipresence. So,
 
 
 ### Sample Image
+
+## Issues
+
+1. [Failed to load video on Android Edge browser](https://github.com/KomeOn/Media-IT-player/issues/2)
+
+   **Update 1:** 
+    The issues arise only on the "Microsoft Edge: AI browser" android application. It works on other browsers like 
+   "Chrome, Firefox, Vivaldi, Opera, DuckDuckGo etc".
+
+## FAQs
+
+## Roadmap
+
+1. PWA version of this website.
+2. Allow photo viewer.
+4. Allow music player and also visualizes it.

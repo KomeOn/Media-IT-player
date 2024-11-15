@@ -1,0 +1,53 @@
+{
+    "name": "Media-IT Player",
+    "short_name": "Media-IT",
+    "icons": [
+        {
+            "src": "/images/app_icon_64_x_64.ico",
+            "sizes": "64x64",
+            "type": "image/x-icon",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/app_icon_144_x_144.ico",
+            "sizes": "144x144",
+            "type": "image/x-icon",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/app_icon_192_x_192.ico",
+            "sizes": "192x192",
+            "type": "image/x-icon",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/app_icon_144_x_144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/app_icon_1024_x_1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/images/screenshot_1.png",
+            "sizes": "1867x972",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/images/screenshot_1.png",
+            "sizes": "1867x972",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}
