@@ -13,7 +13,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
-        <script src="functions.js"></script>
+        <script src="ui_functions.js"></script>
+        <script src="webrtc_functions.js"></script>
         <script src="service-worker.js"></script>
     </head>
     <body>
@@ -35,11 +36,8 @@
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                       <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="collapse navbar-collapse" id="Navbar-Supported-Content">
                       <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="index.html">Home</a>
-                        </li>
                         <li class="nav-item">
                           <a class="nav-link" href="#">FAQs</a>
                         </li>
@@ -52,34 +50,53 @@
             </div>
         </header>
         <main class="container-fluid m-0 p-0">
-            <div class="container-fluid mb-3">
-                <p class="text-center display-4" id="sub-headin">
-                    Media-IT Player
-                </p>
-                <p class="m-0 text-center lead">
-                    A simple, elegant site to play, watch and listen to songs and movies without installing any media player.
-                    <br>
-                    <span class="font-weight-bold">
-                        <em>" can also create downloadable links for free "</em>
-                    </span>
-                </p>
-            </div>
-            <div class="container mx-auto m-2 border border-dark rounded-lg" id="player">
+            <div class="container mx-auto m-2 border border-dark rounded-lg" id="Player">
                 <div class="custom-file my-3">
-                    <input type="file" class="custom-file-input" id="imgInp">
+                    <input type="file" class="custom-file-input" id="Media-Input">
                     <label class="custom-file-label" for="customFile">Choose file</label>
                 </div> 
-                <video class="w-100 playable" controls>
+                <div id="Instruct-Placeholder">
+                    <div class="container-fluid mb-3">
+                        <p class="text-center display-4" id="Sub-Headin">
+                            Media-IT Player
+                        </p>
+                        <p class="m-0 text-center lead">
+                            A simple, elegant site to play, watch and listen to songs and movies without installing any media player.
+                            <br>
+                            <span class="font-weight-bold">
+                                <em>" Create downloadable links for free "</em>
+                            </span>
+                            <br>
+                            <span class="font-weight-bold">
+                                <em>" Load, play and watch videos, audios, images "</em>
+                            </span>
+                            <br>
+                            <span class="font-weight-bold">
+                                <em>" Share or watch with friends and chat "</em>
+                            </span>
+                        </p>
+                    </div>
+                    
+                </div>
+                <video id="Video-Play" class="w-100 playable" controls>
                     <source src="#" type="video/mp4">
                     <source src="#" type="video/webm">
                     <source src="#" type="video/ogg">
                     Your browser does not support the video tag.
                 </video>
-                <audio class="playable">
+                <audio id="Audio-Play" class="w-100 playable" controls>
                     <source src="#" type="audio/mpeg">
                     <source src="#" type="audio/ogg">
-                    <source src="#" type="audio/wav">        
+                    <source src="#" type="audio/wav"> 
+                    Your browser does not support the audio tag       
                 </audio>
+                <img id="Pic-Play" class="playable" />
+                <div id="Share-Media-Bar">
+                    <button id="Share-Media" type="button" class="btn btn-primary">Share Media</button>
+                    <input id="Connect-To" type="file" />
+                    <button id="Close-Connection" type="button" class="btn btn-warning">Close Connection</button>
+                    <!-- <label class="custom-file-label" for="customFile">Insert Invite</label> -->
+                </div>
             </div>
         </main>
         <div class="w-100 d-flex m-0 p-0" style="max-height: 10px; height: 10px;">
@@ -129,7 +146,7 @@
                 
             </div>
             <p class="text-center mb-0">
-                Sanket Sonowal | 2019 - <span id="yrs"></span> &copy; and &trade; | Powered by HTML5  
+                Sanket Sonowal | 2019 - <span id="Yrs"></span> &copy; and &trade; | Powered by HTML5  
             </p>
         </footer>
     </body> 
