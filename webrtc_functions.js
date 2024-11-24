@@ -33,7 +33,25 @@ $(document).ready(() => {
       console.log("File reading started", inviteData["session"]["type"]);
       if (inviteData["session"]["type"] == "offer") {
         console.log("Offer received");
+        // Set up ICE candidate collection for answer
+        remoteConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            answerIceCandidates.push(event.candidate);
+          }
+        };
+
         await remoteConnection.setRemoteDescription(inviteData.session);
+        // Add received ICE candidates from offer
+        if (inviteData.iceCandidates && Array.isArray(inviteData.iceCandidates)) {
+          console.log("Adding ICE candidates from offer");
+          for (const candidate of inviteData.iceCandidates) {
+            try {
+              await remoteConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (e) {
+              console.warn("Error adding ICE candidate:", e);
+            }
+          }
+        }
         const answer = await remoteConnection.createAnswer();
         await remoteConnection.setLocalDescription(answer);
         console.log("Answer generated:", answer);
@@ -60,7 +78,20 @@ $(document).ready(() => {
       }
       else {
         console.log("Answer received");
+        // Set remote description (answer)
         await peerConnection.setRemoteDescription(inviteData.session);
+
+        // Add received ICE candidates from answer
+        if (inviteData.iceCandidates && Array.isArray(inviteData.iceCandidates)) {
+          console.log("Adding ICE candidates from answer");
+          for (const candidate of inviteData.iceCandidates) {
+            try {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (e) {
+              console.warn("Error adding ICE candidate:", e);
+            }
+          }
+        }
       }
     }
 
@@ -72,32 +103,32 @@ $(document).ready(() => {
   async function generateOfferAndICE() {
     try {
     // Set up ICE candidate handling
-    // peerConnection.onicecandidate = (event) => {
-    //   if (event.candidate) {
-    //     iceCandidates.push(event.candidate);
-    //   }
-    // };
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        iceCandidates.push(event.candidate);
+      }
+    };
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
-      // // Wait for ICE gathering to complete
-      // await new Promise((resolve, reject) => {
-      //   const timeout = setTimeout(() => {
-      //     peerConnection.removeEventListener("icegatheringstatechange", checkState);
-      //     resolve(); // Resolve anyway after timeout
-      //   }, 5000); // 5 second timeout
-      //   const checkState = () => {
-      //     if (peerConnection.iceGatheringState === "complete") {
-      //       peerConnection.removeEventListener("icegatheringstatechange", checkState);
-      //       resolve();
-      //     } else if (peerConnection.iceConnectionState === "failed") {
-      //       reject(new Error("ICE gathering failed."));
-      //     }
-      //   };
-      //   peerConnection.addEventListener("icegatheringstatechange", checkState);
-      //      // Check immediately in case it's already complete
-      // checkState();
-      // });
+      // Wait for ICE gathering to complete
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          peerConnection.removeEventListener("icegatheringstatechange", checkState);
+          resolve(); // Resolve anyway after timeout
+        }, 5000); // 5 second timeout
+        const checkState = () => {
+          if (peerConnection.iceGatheringState === "complete") {
+            peerConnection.removeEventListener("icegatheringstatechange", checkState);
+            resolve();
+          } else if (peerConnection.iceConnectionState === "failed") {
+            reject(new Error("ICE gathering failed."));
+          }
+        };
+        peerConnection.addEventListener("icegatheringstatechange", checkState);
+           // Check immediately in case it's already complete
+      checkState();
+      });
 
       return {
         sdp: peerConnection.localDescription.sdp,
@@ -114,9 +145,9 @@ $(document).ready(() => {
   async function generateInviteFile() {
     console.log("Generating invite...");
     try {
-      // const offer = await generateOfferAndICE();
-      const offer = peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+      const offer = await generateOfferAndICE();
+      // const offer = peerConnection.createOffer();
+      // await peerConnection.setLocalDescription(offer);
       let temp_offer = peerConnection.localDescription.sdp;
       // temp_offer += `m=application 9 DTLS/SCTP webrtc-datachannel\r\n`;
       // temp_offer += `m=video 9 RTP/SAVPF 100\r\n`;
