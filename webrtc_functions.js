@@ -1,4 +1,4 @@
-$(document).ready(() => {
+// $(document).ready(() => {
   let peerConnection = new RTCPeerConnection();
   let remoteConnection = new RTCPeerConnection();
   let iceCandidates = [];
@@ -21,7 +21,7 @@ $(document).ready(() => {
   })
 
   // Recieve Negotiation
-  async function receiveInviteFile(file) {
+  export async function receiveInviteFile(file) {
     console.log(file[0]);
     // console.log(file[0]);
     const reader = new FileReader();
@@ -144,6 +144,7 @@ $(document).ready(() => {
   // Generate invite file containing SDP, ICE and other metadata
   async function generateInviteFile() {
     console.log("Generating invite...");
+    $('#Connect-To').show();
     try {
       const offer = await generateOfferAndICE();
       // const offer = peerConnection.createOffer();
@@ -203,6 +204,7 @@ $(document).ready(() => {
         break;
       case "stable":
         console.log("Connection established");
+        $('#Close-Connection').show();
         if (!dataChannel){
           dataChannel = peerConnection.createDataChannel("chat");
           establishDataChannel(dataChannel);
@@ -231,6 +233,7 @@ $(document).ready(() => {
         break;
       case "stable":
         console.log("Connection established");
+        $('#Close-Connection').show();
         break;
     }
   }
@@ -238,8 +241,19 @@ $(document).ready(() => {
   remoteConnection.ondatachannel = async (e) => {
     console.log("Data channel received");
     const dataChannel = e.channel;
+    let receivedChunks = [];
     dataChannel.onmessage = (e) => {
       console.log("Message received:", e.data);
+      if (event.data === "End_of_Audio_File") {
+        // Combine all received chunks into a Blob
+        // const audioBlob = new Blob(receivedChunks, { type: "audio/webm" });
+        const audioBlob = new Blob(receivedChunks, { type: "audio/mp3" });
+        playReceivedAudio(audioBlob);
+        receivedChunks = []; // Reset for the next transmission
+        $('#Share-Media-Bar').show();
+    } else {
+        receivedChunks.push(event.data);
+    }
     }
   }
 
@@ -247,8 +261,21 @@ $(document).ready(() => {
   async function establishDataChannel(dataChannel) {
     console.log("Establishing data channel");
     dataChannel.onopen = () => {
+      let src = ""
       console.log("Data channel opened");
-    }
+      if ($('#Video-Play').attr('src') != undefined){
+        src = $('#Video-Play').attr('src');
+        console.log("Video received", src);      
+      }
+      else if ($('#Audio-Play').attr('src') != undefined){
+        let src = $('#Audio-Play').attr('src');
+        console.log("Audio received", src);
+        handleAudioFile(src);
+      }
+      else if ($('#Pic-Play').attr('src') != undefined){
+        src = $('#Pic-Play').attr('src');
+        console.log("Picture received", src);
+      }}
     dataChannel.onmessage = (e) => {
       console.log("Message received:", e.data);
     }
@@ -269,4 +296,42 @@ $(document).ready(() => {
     iceCandidates = [];
     answerIceCandidates = [];
   }
-})
+
+  // send audio files
+  async function audioSent(audioURL) {
+    const response = await fetch(audioURL);
+    const audioBlob = await response.blob();
+    console.log("Audio Blob fetched:", audioBlob);
+    const audioBuffer = await audioBlob.arrayBuffer();
+    const chunkSize = 16384;
+    let offset = 0;
+    while (offset < audioBuffer.byteLength) {
+      const chunk = audioBuffer.slice(offset, offset + chunkSize);
+      dataChannel.send(chunk);
+      offset += chunkSize;
+    }
+    dataChannel.send("End_of_Audio_File");
+  }
+
+  export async function handleAudioFile(file) {
+    // const file = inputElement.files[0];
+    // if (file && file.type.startsWith("audio/")) {
+    console.log("Sending audio file:", file.name);
+    audioSent(file);
+    // } else {
+    //     console.error("Please select a valid audio file.");
+    // }
+}
+
+function playReceivedAudio(audioBlob) {
+  const audioURL = URL.createObjectURL(audioBlob);
+  $('#Audio-Play').attr('src', audioURL);
+  $('#Audio-Play').show();
+      $('#Audio-Play').on('load', () => {
+        URL.revokeObjectURL(audioURL);
+      });
+  // const audioElement = new Audio(audioURL);
+  // audioElement.play().catch((err) => console.error("Audio playback failed:", err));
+}
+
+// })

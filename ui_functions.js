@@ -1,10 +1,12 @@
+import { handleAudioFile, receiveInviteFile } from "./webrtc_functions.js";
+
 $(document).ready(() => {
   console.log("Document ready"); // Add this to verify the script loads
   // Code to manipulate UI
   var d = new Date();
   var n = d.getFullYear();
   $("#Yrs").text(n);
-  // $('#Share-Media-Bar').hide();
+  $('#Share-Media-Bar').hide();
   $('#Video-Play').hide();
   $('#Audio-Play').hide();
   $('#Pic-Play').hide();
@@ -15,8 +17,8 @@ $(document).ready(() => {
     const file = input.files[0];
     if (file && file.type == "application/json") {
       console.log("invite found");
-      receiveInviteFile(file);
-      // videoState(1);
+      receiveInviteFile(input.files);
+      videoState(1);
     }
     else if (file && file.type.startsWith("video/")) {
       console.log("video");
@@ -44,8 +46,8 @@ $(document).ready(() => {
       videoState(2);
     }
     else if (file && file.type.startsWith("audio/")) { 
-      console.log("Audio");
       const fileBlob = URL.createObjectURL(file);
+      console.log("Audio", fileBlob);
       $('#Audio-Play').attr('src', fileBlob);
       $('#Audio-Play').on('load', () => {
         URL.revokeObjectURL(fileBlob);
@@ -77,18 +79,24 @@ $(document).ready(() => {
       $('.playable').hide();
       $('#Audio-Play').show();
       $('#Share-Media-Bar').show();    
+      $('#Connect-To').hide();
+      $('#Close-Connection').hide();
     }
     else if (typ == 2) {
       $('#Instruct-Placeholder').hide();
       $('.playable').hide();
       $('#Pic-Play').show();
       $('#Share-Media-Bar').show();
+      $('#Connect-To').hide();
+      $('#Close-Connection').hide();
     }
     else if (typ == 1) {
       $('#Instruct-Placeholder').hide();
       $('.playable').hide();
-      $('#Video-Play').show();
-      $('#Share-Media-Bar').show();
+      // $('#Video-Play').show();
+      // $('#Share-Media-Bar').show();
+      // $('#Connect-To').hide();
+      $('#Close-Connection').hide();
     }
   }
 
